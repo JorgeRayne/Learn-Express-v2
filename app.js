@@ -1,6 +1,20 @@
 import express from 'express';
 import path from 'path';
 import { fileURLToPath } from 'url';
+import mongoose from 'mongoose';
+import Article from './models/articles.model.js';
+
+//Database Connection
+mongoose.connect('mongodb://localhost:27017/nodekb');
+let db = mongoose.connection;
+
+db.once('open', () => {
+    console.log('database connected')
+})
+db.on('error', (err) => {
+    console.log(err)
+})
+
 
 //Init App
 const app = express();
@@ -12,31 +26,14 @@ app.set('views', path.join(__dirname, 'views'));
 app.set('view engine', 'pug')
 
 //Home Route
-app.get('/', (req, res) => {
-    let articles = [
-        {
-            id:1,
-            title: 'Article One',
-            author: 'Brad Traversy',
-            body: 'this is article one'
-        },
-        {
-            id:2,
-            title: 'Article Two',
-            author: 'Jorge Rayne',
-            body: 'this is article two'
-        },
-        {
-            id:3,
-            title: 'Article Three',
-            author: 'Brad Traversy',
-            body: 'this is article Three'
-        },
-    ]
+app.get('/', async (req, res) => {
+    let articles = await Article.find({});
+    console.log(articles)
+
     res.render('index', {
         title: 'Hello',
         articles: articles
-    })
+    });
 });
 //Add Article
 app.get('/article/add', (req, res) => {
