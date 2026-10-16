@@ -11,6 +11,7 @@
   "license": "ISC",
   "type": "module",
   "dependencies": {
+    "bower": "^1.8.14",
     "express": "^5.2.1",
     "mongoose": "^9.11.2",
     "pug": "^3.0.4"
