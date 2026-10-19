@@ -85,6 +85,23 @@ app.post('/articles/add', async (req, res) => {
   }
 })
 
+app.get('/article/edit/:id', async (req, res) => {
+    try {
+        const article = await Article.findById(req.params.id)
+        if (!article){
+            throw new Error('Article with id ' + id + ' didnt find');
+        }
+        res.render('article', {
+            article: article
+        });
+    } catch (error) {
+        console.log(error)
+        res.render('article', {
+            message: error
+        });
+    }
+});
+
 // Start Server
 app.listen(8000, () => {
     console.log('Server is running at PORT: 8000')
