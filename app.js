@@ -127,6 +127,26 @@ app.post('/articles/edit/:id', async (req, res) => {
         
     }
 })
+
+app.delete('/article/:id', async (req, res) => {
+     const id = req.params.id;
+
+     try {
+        const article = await Article.findByIdAndDelete(id);
+        if(!article) {
+            return res.status(404).send('Article not found');
+        };
+        res.status(200).send('Article deleted successfully');
+     } catch (error) {
+        console.error('Error deleting article:', error);
+
+        if (error.name === 'CastError') {
+            return res.status(400).send('Invalid article ID');
+        }
+
+        res.status(500).send('Failed to delete article');
+     }
+});
  
 // Start Server
 app.listen(8000, () => {
