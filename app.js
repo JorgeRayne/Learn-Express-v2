@@ -3,6 +3,7 @@ import path from 'path';
 import { fileURLToPath } from 'url';
 import mongoose from 'mongoose';
 import Article from './models/articles.model.js';
+import { title } from 'process';
 
 //Database Connection
 mongoose.connect('mongodb://localhost:27017/nodekb');
@@ -85,6 +86,7 @@ app.post('/articles/add', async (req, res) => {
   }
 })
 
+//Edit route
 app.get('/article/edit/:id', async (req, res) => {
     try {
         const article = await Article.findById(req.params.id)
@@ -103,6 +105,29 @@ app.get('/article/edit/:id', async (req, res) => {
     }
 });
 
+//Update article
+app.post('/articles/edit/:id', async (req, res) => {
+    const id = req.params.id;
+    const { title, author, body } = req.body;
+    try {
+        const article = await Article.findByIdAndUpdate(
+            id,
+            { title, author, body },
+            {
+                returnDocument: 'after'
+            }
+        );
+        
+        if(!article){
+            return res.status(404).send(`Article with id ${id} not found`);
+        }
+        res.redirect('/')
+
+    } catch (error) {
+        
+    }
+})
+ 
 // Start Server
 app.listen(8000, () => {
     console.log('Server is running at PORT: 8000')
