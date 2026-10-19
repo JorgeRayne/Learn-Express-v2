@@ -91,7 +91,8 @@ app.get('/article/edit/:id', async (req, res) => {
         if (!article){
             throw new Error('Article with id ' + id + ' didnt find');
         }
-        res.render('article', {
+        res.render('edit_article', {
+            title: 'Edit Article',
             article: article
         });
     } catch (error) {
