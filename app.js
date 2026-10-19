@@ -53,7 +53,6 @@ app.get('/', async (req, res) => {
 // Get Single Data
 app.get('/article/:id', async (req ,res) => {
     const article = await Article.findById(req.params.id)
-    console.log(article)
     res.render('article', {
         article: article
     });
