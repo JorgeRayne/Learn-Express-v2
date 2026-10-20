@@ -39,20 +39,34 @@ app.use("/bower_components", express.static(path.join(__dirname, "bower_componen
 
 //Express Session Middleware
 app.use(
+//   session({
+//     secret: 'keyboard cat',
+//     resave: true,
+//     saveUninitialized: false,
+//     cookie: {
+//       httpOnly: true,
+//       path: '/',
+//       maxAge: 60000
+//     }
+
+//     // cookie: (req) => {
+//     //   const match = req.url.match(/^\/([^/]+)/);
+
+//     //   return {
+//     //     path: match ? `/${match[1]}` : '/',
+//     //     httpOnly: true,
+//     //     secure: req.secure,
+//     //     maxAge: 60000
+//     //   };
+//     // }
+//   })
   session({
-    secret: process.env.SESSION_SECRET || 'development-only-secret',
+    secret: process.env.SESSION_SECRET || "keyboard cat",
     resave: false,
     saveUninitialized: false,
-
-    cookie: (req) => {
-      const match = req.url.match(/^\/([^/]+)/);
-
-      return {
-        path: match ? `/${match[1]}` : '/',
-        httpOnly: true,
-        secure: req.secure,
-        maxAge: 60000
-      };
+    cookie: {
+      httpOnly: true,
+      maxAge: 60000
     }
   })
 );
@@ -66,25 +80,24 @@ app.use((req, res, next) => {
 });
 
 // Express Validator Middleware
-// Express Validator
-const myValidationResult = validationResult.withDefaults({
-  formatter: (error) => {
-    const namespace = error.path.split('.');
-    const root = namespace.shift();
+// const myValidationResult = validationResult.withDefaults({
+//   formatter: (error) => {
+//     const namespace = error.path.split('.');
+//     const root = namespace.shift();
 
-    let formParam = root;
+//     let formParam = root;
 
-    while (namespace.length) {
-      formParam += `[${namespace.shift()}]`;
-    }
+//     while (namespace.length) {
+//       formParam += `[${namespace.shift()}]`;
+//     }
 
-    return {
-      param: formParam,
-      msg: error.msg,
-      value: error.value
-    };
-  }
-});
+//     return {
+//       param: formParam,
+//       msg: error.msg,
+//       value: error.value
+//     };
+//   }
+// });
 
 //Home Route
 app.get('/', async (req, res) => {
@@ -128,10 +141,11 @@ app.post('/articles/add', async (req, res) => {
 
     await article.save();
 
-    res.redirect("/");
+    req.flash('success', 'Article Added');
+    return res.redirect("/");
   } catch (err) {
     console.error("Error saving article:", err);
-    res.status(500).send("Failed to save article.");
+    return res.status(500).send("Failed to save article.");
   }
 })
 
@@ -170,7 +184,8 @@ app.post('/articles/edit/:id', async (req, res) => {
         if(!article){
             return res.status(404).send(`Article with id ${id} not found`);
         }
-        res.redirect('/')
+        req.flash("success", "Article updated successfully");
+        return res.redirect('/')
 
     } catch (error) {
         
