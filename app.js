@@ -3,7 +3,10 @@ import path from 'path';
 import { fileURLToPath } from 'url';
 import mongoose from 'mongoose';
 import Article from './models/articles.model.js';
-import { title } from 'process';
+import session from 'express-session';
+import flash from 'connect-flash';
+import { body, validationResult } from 'express-validator';
+import expressMessages from 'express-messages';
 
 //Database Connection
 mongoose.connect('mongodb://localhost:27017/nodekb');
@@ -32,10 +35,56 @@ app.use(express.json());
 
 //set public folder
 app.use(express.static(path.join(__dirname, 'public')))
+app.use("/bower_components", express.static(path.join(__dirname, "bower_components")));
+
+//Express Session Middleware
 app.use(
-    "/bower_components",
-    express.static(path.join(__dirname, "bower_components"))
+  session({
+    secret: process.env.SESSION_SECRET || 'development-only-secret',
+    resave: false,
+    saveUninitialized: false,
+
+    cookie: (req) => {
+      const match = req.url.match(/^\/([^/]+)/);
+
+      return {
+        path: match ? `/${match[1]}` : '/',
+        httpOnly: true,
+        secure: req.secure,
+        maxAge: 60000
+      };
+    }
+  })
 );
+
+//Express Messages Middleware
+app.use(flash());
+
+app.use((req, res, next) => {
+  res.locals.messages = expressMessages(req, res);
+  next();
+});
+
+// Express Validator Middleware
+// Express Validator
+const myValidationResult = validationResult.withDefaults({
+  formatter: (error) => {
+    const namespace = error.path.split('.');
+    const root = namespace.shift();
+
+    let formParam = root;
+
+    while (namespace.length) {
+      formParam += `[${namespace.shift()}]`;
+    }
+
+    return {
+      param: formParam,
+      msg: error.msg,
+      value: error.value
+    };
+  }
+});
 
 //Home Route
 app.get('/', async (req, res) => {
