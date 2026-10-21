@@ -16,12 +16,6 @@ router.get('/', async (req, res) => {
         console.log(error);
     }
 })
-router.get('/:id', async (req ,res) => {
-    const article = await Article.findById(req.params.id)
-    res.render('article', {
-        article: article
-    });
-})
 
 //Add Article Page
 router.get('/add', (req, res) => {
@@ -29,6 +23,15 @@ router.get('/add', (req, res) => {
         title: 'Add Article'
     })
 })
+
+//Get singel Article
+router.get('/:id', async (req ,res) => {
+    const article = await Article.findById(req.params.id)
+    res.render('article', {
+        article: article
+    });
+})
+
 
 //Add Article
 router.post('/add',[

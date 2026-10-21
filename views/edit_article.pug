@@ -2,7 +2,7 @@ extend layout
 
 block content
     h1 #{title}
-    form(method='POST' action='/articles/edit/' + article._id)
+    form(method='POST' action='/article/edit/' + article._id)
         #form-group
             lable Title: 
             input.form-control(name='title', type='text', value=article.title)
