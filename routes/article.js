@@ -2,9 +2,9 @@ import express from 'express'
 import Article from '../models/articles.model.js';
 import { body, validationResult } from 'express-validator';
 
-const router = express.Router();
+const article = express.Router();
 
-router.get('/', async (req, res) => {
+article.get('/', async (req, res) => {
     try {
         const articles = await Article.find();
 
@@ -18,14 +18,14 @@ router.get('/', async (req, res) => {
 })
 
 //Add Article Page
-router.get('/add', (req, res) => {
+article.get('/add', (req, res) => {
     res.render('add_article', {
         title: 'Add Article'
     })
 })
 
 //Get singel Article
-router.get('/:id', async (req ,res) => {
+article.get('/:id', async (req ,res) => {
     const article = await Article.findById(req.params.id)
     res.render('article', {
         article: article
@@ -34,7 +34,7 @@ router.get('/:id', async (req ,res) => {
 
 
 //Add Article
-router.post('/add',[
+article.post('/add',[
     body('title')
         .notEmpty()
         .isString()
@@ -50,12 +50,10 @@ router.post('/add',[
 ] ,async (req, res) => {
     const errors = validationResult(req);
     try {
-        console.log(errors.array())
         if (!errors.isEmpty()) {
-            console.log(errors)
             return res.status(400).render('add_article', {
-            title: 'Add Article',
-            errors: errors.array()
+                title: 'Add Article',
+                errors: errors.array()
             });
         }
         const { title, author, body } = req.body;
@@ -79,7 +77,7 @@ router.post('/add',[
 })
 
 //Edit route
-router.get('/edit/:id', async (req, res) => {
+article.get('/edit/:id', async (req, res) => {
     try {
         const article = await Article.findById(req.params.id)
         if (!article){
@@ -98,7 +96,7 @@ router.get('/edit/:id', async (req, res) => {
 });
 
 //Update article
-router.post('/edit/:id', async (req, res) => {
+article.post('/edit/:id', async (req, res) => {
     const id = req.params.id;
     const { title, author, body } = req.body;
     try {
@@ -121,7 +119,7 @@ router.post('/edit/:id', async (req, res) => {
     }
 })
 
-router.delete('/:id', async (req, res) => {
+article.delete('/:id', async (req, res) => {
      const id = req.params.id;
 
      try {
@@ -141,4 +139,4 @@ router.delete('/:id', async (req, res) => {
      }
 });
 
-export default router;
+export default article;
