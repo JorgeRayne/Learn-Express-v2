@@ -5,8 +5,9 @@ import mongoose from 'mongoose';
 import Article from './models/articles.model.js';
 import session from 'express-session';
 import flash from 'connect-flash';
-import router  from './routes/article.js';
+import article  from './routes/article.js';
 import expressMessages from 'express-messages';
+import user from './routes/users.js'
 
 //Database Connection
 mongoose.connect('mongodb://localhost:27017/nodekb');
@@ -58,25 +59,6 @@ app.use((req, res, next) => {
   next();
 });
 
-// Express Validator Middleware
-// const myValidationResult = validationResult.withDefaults({
-//   formatter: (error) => {
-//     const namespace = error.path.split('.');
-//     const root = namespace.shift();
-
-//     let formParam = root;
-
-//     while (namespace.length) {
-//       formParam += `[${namespace.shift()}]`;
-//     }
-
-//     return {
-//       param: formParam,
-//       msg: error.msg,
-//       value: error.value
-//     };
-//   }
-// });
 
 //Home Route
 app.get('/', async (req, res) => {
@@ -92,7 +74,8 @@ app.get('/', async (req, res) => {
     }
 });
 
-app.use('/article', router);
+app.use('/article', article);
+app.use('/user', user);
  
 // Start Server
 app.listen(8000, () => {
