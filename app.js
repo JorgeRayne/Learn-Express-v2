@@ -129,24 +129,48 @@ app.get('/articles/add', (req, res) => {
 })
 
 //Add Article
-app.post('/articles/add', async (req, res) => {
-  try {
-    const { title, author, body } = req.body;
+app.post('/articles/add',[
+    body('title')
+        .notEmpty()
+        .isString()
+        .withMessage('Title is Required'),
+    body('author')
+        .notEmpty()
+        .isString()
+        .withMessage('Author is Required'),
+    body('body')
+        .notEmpty()
+        .isString()
+        .withMessage('Body is Required')
+] ,async (req, res) => {
+    const errors = validationResult(req);
+    try {
+        console.log(errors.array())
+        if (!errors.isEmpty()) {
+            console.log(errors)
+            return res.status(400).render('add_article', {
+            title: 'Add Article',
+            errors: errors.array()
+            });
+        }
+        const { title, author, body } = req.body;
 
-    const article = new Article({
-      title,
-      author,
-      body
-    });
+        const article = new Article({
+        title,
+        author,
+        body
+        });
 
-    await article.save();
+        await article.save();
 
-    req.flash('success', 'Article Added');
-    return res.redirect("/");
-  } catch (err) {
-    console.error("Error saving article:", err);
-    return res.status(500).send("Failed to save article.");
-  }
+        req.flash('success', 'Article Added');
+        return res.redirect("/");
+    } catch (err) {
+        return res.render('add_article', {
+            title: 'Add Article',
+            errors: err
+        })
+    }
 })
 
 //Edit route

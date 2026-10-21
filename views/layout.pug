@@ -36,6 +36,9 @@ html(lang="en")
 
         .container
             != messages()
+            if errors && errors.length
+                each error in errors
+                    div.alert.alert-danger= error.msg
             block content
             br
             hr
