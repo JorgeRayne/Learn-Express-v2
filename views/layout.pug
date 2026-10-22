@@ -32,10 +32,14 @@ html(lang="en")
                         li
                             a(href="/article/add") Add Article
                     ul.nav.navbar-nav.navbar-right  
-                        li 
-                            a(href="/user/register") Register
-                        li 
-                            a(href="/user/login") Login
+                        if user 
+                            li 
+                                a(href='user/logout') Logout 
+                        else
+                            li 
+                                a(href="/user/register") Register
+                            li 
+                                a(href="/user/login") Login
 
 
         .container

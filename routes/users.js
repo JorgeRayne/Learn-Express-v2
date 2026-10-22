@@ -104,4 +104,11 @@ user.post('/login', (req, res, next) => {
     })(req, res, next); 
 });
 
+user.get('/logout', (req, res) => {
+    req.logout((err)=>{
+    });
+    req.flash('success', 'Your are logout');
+    res.redirect('/');
+});
+
 export default user;
