@@ -2,6 +2,8 @@ import express from 'express';
 import User from '../models/user.model.js';
 import { body, validationResult } from 'express-validator';
 import bcrypt from 'bcryptjs';
+import passport from 'passport';
+
 
 const user = express.Router()
 
@@ -9,7 +11,6 @@ const user = express.Router()
 user.get('/register', (req, res) => {
     res.render('register');
 })
-
 
 user.post('/register', [
     body('name')
@@ -89,10 +90,18 @@ user.post('/register', [
     }
 });
 
-
-
+//Get login page
 user.get('/login', (req, res) => {
     res.render('login');
 })
+
+//Login from
+user.post('/login', (req, res, next) => {
+    passport.authenticate('local', {
+        successRedirect: '/',
+        failureRedirect: '/user/login',
+        failureFlash: true
+    })(req, res, next); 
+});
 
 export default user;
