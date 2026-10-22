@@ -1,24 +1,15 @@
 import express from 'express';
 import path from 'path';
 import { fileURLToPath } from 'url';
-import mongoose from 'mongoose';
 import Article from './models/articles.model.js';
 import session from 'express-session';
 import flash from 'connect-flash';
 import article  from './routes/article.js';
 import expressMessages from 'express-messages';
-import user from './routes/users.js'
-
-//Database Connection
-mongoose.connect('mongodb://localhost:27017/nodekb');
-let db = mongoose.connection;
-
-db.once('open', () => {
-    console.log('database connected')
-})
-db.on('error', (err) => {
-    console.log(err)
-})
+import user from './routes/users.js';
+import connectDb from './config/database.js';
+import passport from 'passport';
+import configurePassport from './config/passport.js';
 
 
 //Init App
@@ -51,6 +42,8 @@ app.use(
   })
 );
 
+configurePassport();
+
 //Express Messages Middleware
 app.use(flash());
 
@@ -58,6 +51,8 @@ app.use((req, res, next) => {
   res.locals.messages = expressMessages(req, res);
   next();
 });
+app.use(passport.initialize());
+app.use(passport.session())
 
 
 //Home Route
@@ -78,6 +73,19 @@ app.use('/article', article);
 app.use('/user', user);
  
 // Start Server
-app.listen(8000, () => {
-    console.log('Server is running at PORT: 8000')
-});
+// app.listen(8000, () => {
+//     console.log('Server is running at PORT: 8000')
+// });
+
+const startServer = async () => {
+    try {
+        await connectDb();
+
+        app.listen(8000, () => {
+            console.log(`Server running on port 800`);
+        })
+    } catch (error) { 
+    }
+}
+
+startServer();

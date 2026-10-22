@@ -11,3 +11,16 @@
 #messages ul.success li {
   margin: 0;
 }
+
+.error li{
+  color: #a94442;
+  background-color: #f2dede;
+  border: #ebccd1;
+  text-decoration: none;
+}
+
+.alert-error{
+  color: #a94442;
+  background-color: #f2dede;
+  border: #ebccd1
+}
