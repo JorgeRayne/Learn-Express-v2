@@ -27,12 +27,13 @@ article.get('/add', (req, res) => {
 
 //Get singel Article
 article.get('/:id', async (req ,res) => {
-    const user = await User.findById(req.user.id)
     const article = await Article.findById(req.params.id)
+    const user = await User.findById(article.author)
     res.render('article', {
         article: article,
-        user: user.name
+        author: user.name
     });
+    // console.log(req.params);
 })
 
 
