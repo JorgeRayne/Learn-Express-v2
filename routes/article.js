@@ -39,10 +39,6 @@ article.post('/add',[
         .notEmpty()
         .isString()
         .withMessage('Title is Required'),
-    body('author')
-        .notEmpty()
-        .isString()
-        .withMessage('Author is Required'),
     body('body')
         .notEmpty()
         .isString()
@@ -51,16 +47,18 @@ article.post('/add',[
     const errors = validationResult(req);
     try {
         if (!errors.isEmpty()) {
+            console.log(errors);
             return res.status(400).render('add_article', {
                 title: 'Add Article',
                 errors: errors.array()
             });
         }
-        const { title, author, body } = req.body;
+        const { title,body } = req.body;
+        const user = req.user.id;
 
         const article = new Article({
         title,
-        author,
+        author:user,
         body
         });
 
@@ -69,6 +67,7 @@ article.post('/add',[
         req.flash('success', 'Article Added');
         return res.redirect("/");
     } catch (err) {
+        console.log(err);
         return res.render('add_article', {
             title: 'Add Article',
             errors: err
