@@ -80,15 +80,26 @@ article.post('/add',[
 })
 
 //Edit route
-article.get('/edit/:id', async (req, res) => {
+article.get('/edit/:id',[
+        body('title')
+        .notEmpty()
+        .isString()
+        .withMessage('Title is Required'),
+    body('body')
+        .notEmpty()
+        .isString()
+        .withMessage('Body is Required')
+], async (req, res) => {
     try {
         const article = await Article.findById(req.params.id)
+        const user = await User.findById(article.author)
         if (!article){
             throw new Error('Article with id ' + id + ' didnt find');
         }
         res.render('edit_article', {
             title: 'Edit Article',
-            article: article
+            article: article,
+            author: user.author
         });
     } catch (error) {
         console.log(error)
@@ -125,13 +136,13 @@ article.post('/edit/:id', async (req, res) => {
 article.delete('/:id', async (req, res) => {
      const id = req.params.id;
 
-     try {
+    try {
         const article = await Article.findByIdAndDelete(id);
         if(!article) {
             return res.status(404).send('Article not found');
         };
         res.status(200).send('Article deleted successfully');
-     } catch (error) {
+    } catch (error) {
         console.error('Error deleting article:', error);
 
         if (error.name === 'CastError') {
@@ -139,7 +150,7 @@ article.delete('/:id', async (req, res) => {
         }
 
         res.status(500).send('Failed to delete article');
-     }
+    }
 });
 
 export default article;
