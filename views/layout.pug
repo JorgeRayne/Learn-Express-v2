@@ -29,8 +29,9 @@ html(lang="en")
                     ul.nav.navbar-nav
                         li
                             a(href="/") Home
-                        li
-                            a(href="/article/add") Add Article
+                        if user
+                            li
+                                a(href="/article/add") Add Article
                     ul.nav.navbar-nav.navbar-right  
                         if user 
                             li 
