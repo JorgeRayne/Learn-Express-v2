@@ -1,5 +1,6 @@
 import express from 'express'
 import Article from '../models/articles.model.js';
+import User from '../models/user.model.js'
 import { body, validationResult } from 'express-validator';
 
 const article = express.Router();
@@ -26,9 +27,11 @@ article.get('/add', (req, res) => {
 
 //Get singel Article
 article.get('/:id', async (req ,res) => {
+    const user = await User.findById(req.user.id)
     const article = await Article.findById(req.params.id)
     res.render('article', {
-        article: article
+        article: article,
+        user: user.name
     });
 })
 
